@@ -3,11 +3,13 @@
 namespace LearnImGui
 {
 
+namespace {
 ApplicationContext g_demo_window_context
 {
     .window_name = "Main Window",
     .viewport_size = ImVec2{400, 600}
 };
+}
     
 DemoWindow::DemoWindow()
 : ApplicationWindowBase(g_demo_window_context)

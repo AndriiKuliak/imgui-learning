@@ -33,6 +33,7 @@ set(SOURCES
     "${SOURCE_PATH}/app_window.cpp"
     "${SOURCE_PATH}/app_window_registry.cpp"
     "${SOURCE_PATH}/apps/demo_window.cpp"
+    "${SOURCE_PATH}/apps/first_window.cpp"
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

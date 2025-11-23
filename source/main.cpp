@@ -1,4 +1,5 @@
 #include "apps/demo_window.hpp"
+#include "apps/first_window.hpp"
 #include "app_window_registry.hpp"
 
 #include "initializers/glfw_initializer.hpp" 
@@ -92,6 +93,7 @@ int main(int argc, char* argv[])
         const GLFWvidmode* screen_mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
         AppRegistry::GetInstance().RegisterWindow(std::make_unique<LearnImGui::DemoWindow>());
+        AppRegistry::GetInstance().RegisterWindow(std::make_unique<LearnImGui::FirstWindow>());
 
         AppRegistry::WindowId windowId = 0;
         if (argc > 1) {
