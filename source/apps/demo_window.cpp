@@ -6,7 +6,7 @@ namespace LearnImGui
 ApplicationContext g_demo_window_context
 {
     .window_name = "Main Window",
-    .viewport_size = ImVec2{600, 800}
+    .viewport_size = ImVec2{400, 600}
 };
     
 DemoWindow::DemoWindow()
@@ -48,6 +48,7 @@ void DemoWindow::Prepare()
 void DemoWindow::DataUpdate()
 {
     ImGui::ShowDemoWindow();
+    ImGui::SetWindowPos(ImVec2{0, 0});
 
     ApplicationWindowBase::DataUpdate();
 }
