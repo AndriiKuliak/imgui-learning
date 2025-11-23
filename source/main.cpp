@@ -1,3 +1,6 @@
+#include "apps/demo_window.hpp"
+#include "app_window_registry.hpp"
+
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
@@ -5,31 +8,16 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-#include <chrono>
-#include <thread>
-
-constexpr auto g_statistics_interval = std::chrono::seconds(5);
-constexpr auto g_window_width = 600;
-constexpr auto g_window_height = 800;
 
 static void glfw_error_callback(int error, const char* description)
 {
     std::cerr << "GLFW Error " << error << ": " << description << std::endl;
 }
 
-static bool dump_window_position(const std::chrono::nanoseconds& since_updated)
-{
-    if (std::chrono::duration_cast<std::chrono::seconds>(since_updated) < g_statistics_interval) {
-        return false;
-    }
-
-    const auto window_pos = ImGui::GetWindowPos();
-    std::cout << "Current window pos: X: " << window_pos.x << ", Y: " << window_pos.y << std::endl;
-    return true;
-}
-
 int main(int argc, char* argv[])
 {
+    using AppRegistry = LearnImGui::ApplicationWindowRegistry;
+
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit()) {
         std::cerr << "GLFW Initialization error!" << std::endl;
@@ -45,13 +33,20 @@ int main(int argc, char* argv[])
     float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor());
     const GLFWvidmode* screen_mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-    glfwWindowHint(GLFW_FLOATING, GLFW_FALSE);
-    glfwWindowHint(GLFW_POSITION_X, ((screen_mode->width / 2) - (g_window_width / 2)));
-    glfwWindowHint(GLFW_POSITION_Y, ((screen_mode->height / 2) - (g_window_height / 2)));
+    const auto windowId = AppRegistry::GetInstance().RegisterWindow(std::make_unique<LearnImGui::DemoWindow>());
+    auto& app_window = AppRegistry::GetInstance().GetWindowById(windowId);
+
+    app_window.InitializeContext(ImVec2(screen_mode->width, screen_mode->height));
+
+    glfwWindowHint(GLFW_RESIZABLE, app_window.GetContext().viewportResizable);
+    glfwWindowHint(GLFW_FLOATING, app_window.GetContext().viewportMovable);
+    glfwWindowHint(GLFW_POSITION_X, app_window.GetContext().viewport_pos.x);
+    glfwWindowHint(GLFW_POSITION_Y, app_window.GetContext().viewport_pos.y);
+
+    ImVec2 sizeVec{app_window.GetContext().viewport_size.y * main_scale, app_window.GetContext().viewport_size.y * main_scale};
 
     GLFWwindow* window = 
-        glfwCreateWindow((int)(g_window_width * main_scale), (int)(g_window_height * main_scale), "ImGUI example", nullptr, nullptr);
+        glfwCreateWindow((int)sizeVec.x, (int)sizeVec.y, app_window.GetContext().window_name.data(), nullptr, nullptr);
     if (nullptr == window) {
         std::cerr << "Cannot create application window!" << std::endl;
         return 1;
@@ -73,16 +68,12 @@ int main(int argc, char* argv[])
 
     ImGui::StyleColorsDark();
 
-
     ImGuiStyle& style = ImGui::GetStyle();
     style.ScaleAllSizes(main_scale);
     style.FontScaleDpi = main_scale;
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glfwVersion);
-
-    bool show_demo_window = true;
-    ImVec4 clear_color{ 0.45f, 0.55f, 1.00f, 1.00f };
 
     while(!glfwWindowShouldClose(window)) {
         glfwPollEvents();
@@ -96,12 +87,17 @@ int main(int argc, char* argv[])
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        app_window.Prepare();
+
         // Data update
-        ImGui::ShowDemoWindow(&show_demo_window);
+        app_window.DataUpdate();
 
         // Window rendering
-        ImGui::Render();
+        app_window.Render();
+
         int display_w, display_h;
+        const ImVec4& clear_color = app_window.GetContext().clear_color;
+
         glfwGetFramebufferSize(window, &display_w, &display_h);
         glViewport(0, 0, display_w, display_h);
         glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);

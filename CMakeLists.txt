@@ -28,7 +28,12 @@ include(Imgui)
 set(INCLUDE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(SOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/source")
 
-set(SOURCES "${SOURCE_PATH}/main.cpp")
+set(SOURCES 
+    "${SOURCE_PATH}/main.cpp"
+    "${SOURCE_PATH}/app_window.cpp"
+    "${SOURCE_PATH}/app_window_registry.cpp"
+    "${SOURCE_PATH}/apps/demo_window.cpp"
+)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_PATH})
