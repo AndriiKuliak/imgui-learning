@@ -11,7 +11,8 @@ public:
     ApplicationWindowBase(ApplicationContext context);
     virtual ~ApplicationWindowBase() = default;
 
-    virtual void InitializeContext(const ImVec2& screen_size) = 0;
+    virtual void InitializeContext(const ImVec2& screen_size, float scale) = 0;
+    virtual void Configure() = 0;
     virtual void Prepare() = 0;
     virtual void DataUpdate() = 0;
     virtual void Render() = 0;

@@ -20,6 +20,9 @@ struct ApplicationContext
     // Main viewoirt size
     ImVec2 viewport_size;
 
+    // Main viewport scale
+    float scale;
+
     // Should viewport be resizable
     bool viewportResizable = true;
     // Should viewport be movable

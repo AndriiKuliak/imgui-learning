@@ -8,7 +8,12 @@ ApplicationWindowBase::ApplicationWindowBase(ApplicationContext context)
 {
 }
 
-void ApplicationWindowBase::InitializeContext(const ImVec2& screen_size)
+void ApplicationWindowBase::InitializeContext(const ImVec2& screen_size, float scale)
+{
+
+}
+
+void ApplicationWindowBase::Configure()
 {
 
 }

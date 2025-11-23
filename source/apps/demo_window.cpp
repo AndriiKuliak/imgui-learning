@@ -15,13 +15,29 @@ DemoWindow::DemoWindow()
 
 }
 
-void DemoWindow::InitializeContext(const ImVec2& screen_size)
+void DemoWindow::InitializeContext(const ImVec2& screen_size, float scale)
 {
-    ApplicationWindowBase::InitializeContext(screen_size);
+    ApplicationWindowBase::InitializeContext(screen_size, scale);
+    m_context.scale = scale;
     m_context.viewport_pos = ImVec2(
         (screen_size.x / 2) - m_context.viewport_size.x / 2, 
         (screen_size.y / 2) - m_context.viewport_size.y / 2
     );
+}
+
+void DemoWindow::Configure()
+{
+    ApplicationWindowBase::Configure();
+
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.IniFilename = nullptr;
+
+    ImGui::StyleColorsDark();
+
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.ScaleAllSizes(m_context.scale);
+    style.FontScaleDpi = m_context.scale;
 }
 
 void DemoWindow::Prepare()
